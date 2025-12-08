@@ -1,0 +1,205 @@
+#----------------------------------------------------------
+# AWS CONFIGURATION COMMANDS
+#----------------------------------------------------------
+
+# Configure AWS credentials (Access Key, Secret Key, Region, Output)
+aws configure
+
+# Use a specific profile
+aws configure --profile myprofile
+
+# View current configuration
+aws configure list
+
+#----------------------------------------------------------
+# STS (Security Token Service)
+# Used to get temporary credentials, identity info.
+#----------------------------------------------------------
+
+# Get caller identity (who am I?)
+aws sts get-caller-identity
+
+# Assume an IAM Role
+aws sts assume-role \
+  --role-arn arn:aws:iam::123456789012:role/MyRole \
+  --role-session-name mysession
+
+#----------------------------------------------------------
+# S3 COMMANDS (Buckets, Uploads, Downloads)
+#----------------------------------------------------------
+
+# List all buckets
+aws s3 ls
+
+# List contents of a bucket
+aws s3 ls s3://my-bucket
+
+# Upload file to S3
+aws s3 cp file.txt s3://my-bucket/path/
+
+# Download file from S3
+aws s3 cp s3://my-bucket/file.txt .
+
+# Sync local folder to S3 (upload changes only)
+aws s3 sync ./local-folder s3://my-bucket/path/
+
+# Sync S3 bucket to local (download changes only)
+aws s3 sync s3://my-bucket/path/ ./local-folder
+
+# Remove S3 object
+aws s3 rm s3://my-bucket/file.txt
+
+#----------------------------------------------------------
+# EC2 COMMANDS (Instances, Volumes, Security Groups)
+#----------------------------------------------------------
+
+# Describe EC2 instances
+aws ec2 describe-instances
+
+# Launch a new EC2 instance
+aws ec2 run-instances \
+  --image-id ami-123456 \
+  --count 1 \
+  --instance-type t2.micro \
+  --key-name mykey \
+  --security-group-ids sg-123456
+
+# Start an instance
+aws ec2 start-instances --instance-ids i-1234567890abcd
+
+# Stop an instance
+aws ec2 stop-instances --instance-ids i-1234567890abcd
+
+# Terminate an instance
+aws ec2 terminate-instances --instance-ids i-1234567890abcd
+
+# Describe volumes
+aws ec2 describe-volumes
+
+#----------------------------------------------------------
+# IAM COMMANDS (Users, Roles, Policies)
+#----------------------------------------------------------
+
+# List IAM users
+aws iam list-users
+
+# List IAM roles
+aws iam list-roles
+
+# Attach policy to user
+aws iam attach-user-policy \
+  --user-name myuser \
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+# Create access keys for a user
+aws iam create-access-key --user-name myuser
+
+#----------------------------------------------------------
+# ECR COMMANDS (Docker Image Registry)
+#----------------------------------------------------------
+
+# Authenticate Docker with ECR
+aws ecr get-login-password \
+  | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com
+
+# Create a new repository
+aws ecr create-repository --repository-name myapp
+
+# List repositories
+aws ecr describe-repositories
+
+#----------------------------------------------------------
+# LAMBDA COMMANDS (Serverless Functions)
+#----------------------------------------------------------
+
+# List Lambda functions
+aws lambda list-functions
+
+# Invoke a Lambda function
+aws lambda invoke \
+  --function-name myfunction \
+  output.json
+
+# Update Lambda code
+aws lambda update-function-code \
+  --function-name myfunction \
+  --zip-file fileb://function.zip
+
+#----------------------------------------------------------
+# CLOUDWATCH LOGS COMMANDS
+#----------------------------------------------------------
+
+# List log groups
+aws logs describe-log-groups
+
+# Tail logs in real-time
+aws logs tail /aws/lambda/myfunction --follow
+
+#----------------------------------------------------------
+# VPC COMMANDS (Networks, Subnets, Route Tables)
+#----------------------------------------------------------
+
+# Describe VPCs
+aws ec2 describe-vpcs
+
+# Describe subnets
+aws ec2 describe-subnets
+
+# Create VPC
+aws ec2 create-vpc --cidr-block 10.0.0.0/16
+
+#----------------------------------------------------------
+# RDS COMMANDS (Databases)
+#----------------------------------------------------------
+
+# List RDS instances
+aws rds describe-db-instances
+
+# Reboot RDS instance
+aws rds reboot-db-instance --db-instance-identifier mydb
+
+#----------------------------------------------------------
+# EKS COMMANDS (Kubernetes on AWS)
+#----------------------------------------------------------
+
+# List EKS clusters
+aws eks list-clusters
+
+# Update kubeconfig to use EKS cluster
+aws eks update-kubeconfig --name mycluster
+
+#----------------------------------------------------------
+# CLOUDFORMATION COMMANDS (Infrastructure as Code)
+#----------------------------------------------------------
+
+# Deploy a CloudFormation stack
+aws cloudformation deploy \
+  --template-file template.yaml \
+  --stack-name mystack \
+  --capabilities CAPABILITY_NAMED_IAM
+
+# Delete a stack
+aws cloudformation delete-stack --stack-name mystack
+
+#----------------------------------------------------------
+# SSM COMMANDS (Systems Manager)
+#----------------------------------------------------------
+
+# List managed instances
+aws ssm describe-instance-information
+
+# Run a remote command on an EC2 instance
+aws ssm send-command \
+  --instance-ids i-1234567890 \
+  --document-name "AWS-RunShellScript" \
+  --parameters commands=["uptime"]
+
+#----------------------------------------------------------
+# GENERAL AWS CLI SYNTAX
+# All commands follow the same pattern:
+#
+# aws <service> <operation> [parameters]
+#
+# Example:
+# aws ec2 describe-instances --region us-east-1
+#----------------------------------------------------------
